@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="https://i.imgur.com/e4oXN9E.png" type="image/png">
+  <title>Rock Paper & Scissors</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #000;
+      color: #fff;
+      overflow-x: hidden;
+      position: relative;
+    }
+    h1 {
+      text-align: center;
+      margin: 40px 0 20px;
+      font-size: 2.5em;
+      color: #ffffff;
+      text-shadow: 0 0 8px #ffffff, 0 0 20px #ffffff, 0 0 40px #8888ff;
+    }
+    .choices {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    .choices button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background: linear-gradient(to bottom right, #2a2a2a, #444);
+      color: #ddd;
+      border: 2px solid #aaa;
+      border-radius: 30px;
+      box-shadow: 0 0 10px #888;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
+      min-width: 140px;
+    }
+    .choices button:hover:enabled {
+      transform: scale(1.06);
+      box-shadow: 0 0 16px #ccc;
+      background: #3a3a3a;
+      border-color: #ccc;
+    }
+    .choices button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .emoji-grid {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .emoji-col span.emoji {
+      font-size: 80px;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .emoji-col span.label {
+      font-size: 16px;
+      color: #aaa;
+      text-transform: uppercase;
+    }
+    #result {
+      font-size: 26px;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 10px;
+    }
+    #countdown {
+      text-align: center;
+      font-size: 22px;
+      margin-top: 10px;
+      color: #ffffff; /* Changed from yellow to white */
+    }
+    .win {
+      color: #00ff88;
+      text-shadow: 0 0 10px #00ff88;
+    }
+    .lose {
+      color: #ff4040;
+      text-shadow: 0 0 10px #ff4040;
+    }
+    .confetti {
+      position: fixed;
+      top: 0;
+      width: 8px;
+      height: 8px;
+      background-color: #ff4081;
+      animation: fall 3s linear forwards;
+      border-radius: 50%;
+      z-index: 9999;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
+    }
+    .star {
+      position: absolute;
+      background: white;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      animation: twinkle 3s infinite ease-in-out;
+      opacity: 0.6;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+    @media (max-width: 600px) {
+      .choices {
+        flex-direction: column;
+        align-items: center;
+      }
+      .emoji-grid {
+        gap: 30px;
+      }
+      .emoji-col span.emoji {
+        font-size: 60px;
+      }
+      h1 {
+        font-size: 2em;
+      }
+    }
+    .Tag {
+      text-align: center;
+      text-shadow: 0px 0px 25px rgb(255,255,255);
+    }
+  </style>
+</head>
+<body>
+  <h1>✨ Rock, Paper, Scissors ✨</h1>
+  <h2 class="Tag">BigNova_Dev Productions</h2>
+  <div class="choices">
+    <button onclick="play('rock')">🪨 Rock</button>
+    <button onclick="play('paper')">📄 Paper</button>
+    <button onclick="play('scissors')">✂️ Scissors</button>
+  </div>
+  <div class="emoji-grid" id="emojiDisplay"></div>
+  <p id="result"></p>
+  <p id="countdown"></p>
+
+  <script>
+    function play(playerChoice) {
+      const resultEl = document.getElementById('result');
+      const emojiDisplay = document.getElementById('emojiDisplay');
+      const buttons = document.querySelectorAll('.choices button');
+      const countdownEl = document.getElementById('countdown');
+
+      buttons.forEach(btn => btn.disabled = true);
+      resultEl.textContent = '';
+      resultEl.className = '';
+      emojiDisplay.innerHTML = '';
+      countdownEl.textContent = '';
+
+      let timeLeft = 1.5;
+      countdownEl.textContent = `Revealing in ${timeLeft.toFixed(1)}s...`;
+
+      const timer = setInterval(() => {
+        timeLeft -= 0.1;
+        if (timeLeft > 0) {
+          countdownEl.textContent = `Revealing in ${timeLeft.toFixed(1)}s...`;
+        } else {
+          clearInterval(timer);
+          countdownEl.textContent = '';
+
+          const choices = ['rock', 'paper', 'scissors'];
+          const icons = { rock: '🪨', paper: '📄', scissors: '✂️' };
+          const aiChoice = choices[Math.floor(Math.random() * choices.length)];
+
+          emojiDisplay.innerHTML = `
+            <div class="emoji-col"><span class="emoji">${icons[playerChoice]}</span><span class="label">You</span></div>
+            <div class="emoji-col"><span class="emoji">⚔️</span><span class="label">VS</span></div>
+            <div class="emoji-col"><span class="emoji">${icons[aiChoice]}</span><span class="label">Computer</span></div>
+          `;
+
+          let resultText = '';
+          if (playerChoice === aiChoice) {
+            resultText = 'It’s a tie!';
+          } else if (
+            (playerChoice === 'rock' && aiChoice === 'scissors') ||
+            (playerChoice === 'paper' && aiChoice === 'rock') ||
+            (playerChoice === 'scissors' && aiChoice === 'paper')
+          ) {
+            resultText = 'You Won!';
+            resultEl.className = 'win';
+            launchConfetti();
+          } else {
+            resultText = 'You Lost!';
+            resultEl.className = 'lose';
+          }
+
+          resultEl.textContent = resultText;
+          setTimeout(() => {
+            buttons.forEach(btn => btn.disabled = false);
+          }, 500);
+        }
+      }, 100);
+    }
+
+    function launchConfetti() {
+      for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.left = Math.random() * window.innerWidth + 'px';
+        confetti.style.backgroundColor = ['#999','#aaa','#888','#bbb'][Math.floor(Math.random()*4)];
+        confetti.style.animationDuration = (Math.random() * 2 + 1) + 's';
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 3000);
+      }
+    }
+
+    for (let i = 0; i < 150; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = Math.random() * window.innerHeight + 'px';
+      star.style.left = Math.random() * window.innerWidth + 'px';
+      star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      document.body.appendChild(star);
+    }
+  </script>
+</body>
+</html>
