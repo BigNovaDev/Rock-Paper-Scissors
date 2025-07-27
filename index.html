@@ -166,7 +166,7 @@
       const timer = setInterval(() => {
         timeLeft -= 0.1;
         if (timeLeft > 0) {
-          countdownEl.textContent = `Revealing in ${timeLeft.toFixed(1)}s...`;
+          countdownEl.textContent = `Opponent is choosing ${timeLeft.toFixed(1)}s...`;
         } else {
           clearInterval(timer);
           countdownEl.textContent = '';
